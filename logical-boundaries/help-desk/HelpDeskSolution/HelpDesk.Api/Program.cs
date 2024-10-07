@@ -1,4 +1,5 @@
 
+using HelpDesk.Api.Incidents;
 using HelpDesk.Api.Services;
 using HelpDesk.Api.User.ReadModels;
 using HelpDesk.Api.User.Services;
@@ -16,7 +17,6 @@ builder.Services.AddCustomServices();
 builder.Services.AddCustomOasGeneration();
 
 builder.Services.AddControllers();
-builder.Services.AddHttpContextAccessor();
 
 if (builder.Environment.IsDevelopment())
 {
@@ -36,7 +36,8 @@ builder.Services.AddMarten(opts =>
     opts.Connection(connectionString);
     opts.Schema.For<User>().Index(u => u.Sub, x => x.IsUnique = true);
     opts.Projections.Add<UserProjection>(ProjectionLifecycle.Inline);
-    
+    opts.Projections.Snapshot<IncidentReadModel>(SnapshotLifecycle.Inline);
+
 }).UseLightweightSessions().AddAsyncDaemon(DaemonMode.Solo);
 
 var app = builder.Build();
@@ -52,9 +53,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.Map("/", async (IProvideUserInformation userProvider) =>
-{
-    var userInfo = await userProvider.GetUserInfoAsync();
-    return Results.Ok(userInfo);
-});
+//app.Map("/", async (IProvideUserInformation userProvider) =>
+//{
+//    var userInfo = await userProvider.GetUserInfoAsync();
+//    return Results.Ok(userInfo);
+//});
 app.Run();
