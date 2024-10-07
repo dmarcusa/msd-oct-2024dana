@@ -1,4 +1,5 @@
 
+using HelpDesk.Api.Catalog;
 using HelpDesk.Api.Incidents;
 using HelpDesk.Api.Services;
 using HelpDesk.Api.User.ReadModels;
@@ -37,7 +38,7 @@ builder.Services.AddMarten(opts =>
     opts.Schema.For<User>().Index(u => u.Sub, x => x.IsUnique = true);
     opts.Projections.Add<UserProjection>(ProjectionLifecycle.Inline);
     opts.Projections.Snapshot<IncidentReadModel>(SnapshotLifecycle.Inline);
-
+    opts.Projections.Add<SoftwareCatalogItemProjection>(ProjectionLifecycle.Inline);
 }).UseLightweightSessions().AddAsyncDaemon(DaemonMode.Solo);
 
 var app = builder.Build();
