@@ -8,7 +8,7 @@ public class CatalogController(IDocumentSession session) : ControllerBase
     [HttpGet("/catalog")]
     public async Task<ActionResult> GetFullCatalogAsync()
     {
-        var response = await session.get
+        //var response = await session.get
         //    [new SoftwareCatalogItem]
         //    );
         return Ok();
