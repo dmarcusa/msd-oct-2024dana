@@ -52,7 +52,8 @@ builder.Host.UseWolverine(opts =>
         // softwarecenter.catalog-item-created
         // softwarecenter.catalog-item-retired
     });
-    //opts.ListenToKafkaTopic("xxx").ProcessInline();
+    opts.ListenToKafkaTopic("softwarecenter.catalog-item-created").ProcessInline();
+    opts.ListenToKafkaTopic("softwarecenter.catalog-item-retired").ProcessInline();
     opts.Policies.AutoApplyTransactions();
 });
 

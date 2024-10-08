@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.21.5" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
     <PackageReference Include="Grpc.Tools" Version="2.49.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,6 +17,9 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\catalog-item-created.proto" GrpcServices="None">
+      <SourceUri>https://raw.githubusercontent.com/JeffryGonzalez/msd-oct-2024/refs/heads/main/logical-boundaries/software-center/schema/software-center/catalog-item-created.proto</SourceUri>
+    </Protobuf>
+    <Protobuf Include="Protos\catalog-item-created1.proto" GrpcServices="Client">
       <SourceUri>https://raw.githubusercontent.com/JeffryGonzalez/msd-oct-2024/refs/heads/main/logical-boundaries/software-center/schema/software-center/catalog-item-created.proto</SourceUri>
     </Protobuf>
   </ItemGroup>
