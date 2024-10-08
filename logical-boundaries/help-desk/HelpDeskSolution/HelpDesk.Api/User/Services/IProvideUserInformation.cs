@@ -1,4 +1,6 @@
-namespace HelpDesk.Api.Services;
+using HelpDesk.Api.User.Models;
+
+namespace HelpDesk.Api.User.Services;
 
 public interface IProvideUserInformation
 {

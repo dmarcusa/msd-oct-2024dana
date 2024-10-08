@@ -1,4 +1,5 @@
-using HelpDesk.Api.Services;
+using HelpDesk.Api.User.Events;
+using HelpDesk.Api.User.Models;
 using Marten;
 
 namespace HelpDesk.Api.User.Services;
@@ -11,7 +12,7 @@ public class UserInformationProvider(IHttpContextAccessor context, IDocumentSess
                   throw new Exception("Cannot be used in a non-authenticated environment");
 
 
-        var user = await session.Query<User.ReadModels.User>().Where(u => u.Sub == sub).FirstOrDefaultAsync();
+        var user = await session.Query<ReadModels.User>().Where(u => u.Sub == sub).FirstOrDefaultAsync();
         if (user == null)
         {
             var id = Guid.NewGuid();
@@ -19,11 +20,9 @@ public class UserInformationProvider(IHttpContextAccessor context, IDocumentSess
             await session.SaveChangesAsync();
             return new UserInfo(id);
         }
-        else
-        {
-            session.Events.Append(user.Id, new UserLoggedIn(user.Id));
-            await session.SaveChangesAsync();
-            return new UserInfo(user.Id);
-        }
+
+        session.Events.Append(user.Id, new UserLoggedIn(user.Id));
+        await session.SaveChangesAsync();
+        return new UserInfo(user.Id);
     }
 }

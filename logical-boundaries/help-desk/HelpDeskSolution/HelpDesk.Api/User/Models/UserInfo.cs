@@ -1,3 +1,3 @@
-namespace HelpDesk.Api.Services;
+namespace HelpDesk.Api.User.Models;
 
 public record UserInfo(Guid UserId);

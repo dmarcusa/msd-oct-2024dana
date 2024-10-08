@@ -1,5 +1,6 @@
 using System.Reflection;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 
@@ -32,6 +33,16 @@ public static class ServicesExtensions
         services.AddSwaggerGen(
             options =>
             {
+                options.TagActionsBy(api =>
+                {
+                    if (api.GroupName != null) return new[] { api.GroupName };
+
+                    var controllerActionDescriptor = api.ActionDescriptor as ControllerActionDescriptor;
+                    if (controllerActionDescriptor != null) return new[] { controllerActionDescriptor.ControllerName };
+
+                    throw new InvalidOperationException("Unable to determine tag for endpoint.");
+                });
+                options.DocInclusionPredicate((name, api) => true);
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header with bearer token",
