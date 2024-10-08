@@ -6,9 +6,13 @@ using HtTemplate.Configuration;
 using Marten;
 using Marten.Events.Daemon.Resiliency;
 using Marten.Events.Projections;
+using Oakton;
+using Wolverine;
+using Wolverine.Kafka;
+using Wolverine.Marten;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Host.ApplyOaktonExtensions();
 
 builder.AddCustomFeatureManagement();
 
@@ -35,7 +39,22 @@ builder.Services.AddMarten(opts =>
     opts.Projections.Snapshot<Incident>(SnapshotLifecycle.Inline);
     opts.Projections.Add<CatalogItemProjection>(ProjectionLifecycle.Async);
     opts.Projections.Snapshot<SubmittedIncident>(SnapshotLifecycle.Async);
-}).UseLightweightSessions().AddAsyncDaemon(DaemonMode.Solo);
+}).UseLightweightSessions().IntegrateWithWolverine().AddAsyncDaemon(DaemonMode.Solo);
+
+var kafkaConnectionString = builder.Configuration.GetConnectionString("kafka") ?? throw new Exception("Need A Broker");
+builder.Host.UseWolverine(opts =>
+{
+    opts.UseKafka(kafkaConnectionString).ConfigureConsumers(c =>
+    {
+        c.AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest;
+        c.GroupId = "help-desk-issue-tracker";
+
+        // softwarecenter.catalog-item-created
+        // softwarecenter.catalog-item-retired
+    });
+    //opts.ListenToKafkaTopic("xxx").ProcessInline();
+    opts.Policies.AutoApplyTransactions();
+});
 
 var app = builder.Build();
 
@@ -51,4 +70,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+return await app.RunOaktonCommands(args);
