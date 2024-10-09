@@ -19,5 +19,10 @@ dev-reset-pg: (dev-pg-down)
 dev-reset-kafka: (dev-kafka-down)
     docker volume rm dev-environment_kafka_data
 
+dev-start-all: (dev-pg) (dev-kafka)
+dev-stop-all: (dev-pg-down) (dev-kafka-down)
+dev-reset-all: (dev-reset-pg) (dev-reset-kafka)
+dev-cycle: (dev-stop-all) (dev-reset-all) (dev-start-all)
+
 software-center-run:
     cd logical-boundaries/software-center/src/backend/SoftwareCenterSolution/SoftwareCenterApi && dotnet run -- run
